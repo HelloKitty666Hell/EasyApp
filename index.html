@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta tu guía</title>
+    <style>
+        body {
+            background-color: #293b3d;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        img {
+            width: 100px;
+            height: auto;
+        }
+        input[type="text"] {
+            padding: 10px;
+            margin: 10px;
+            width: 70%;
+            border-radius: 5px;
+            border: none;
+            background-color: #444;
+            color: white;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #f39c12;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #e67e22;
+        }
+        .result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <img src="https://media-hosting.imagekit.io/be7ca94df68646dd/LOGO%2520EasyTrack.png" alt="Logo EasyTrack">
+    <h2>Consulta tu guía</h2>
+    <input type="text" id="guiaInput" placeholder="Ingresa el número de guía">
+    <button onclick="consultarGuia()">Consultar</button>
+
+    <div class="result" id="result"></div>
+
+    <script>
+        function consultarGuia() {
+            const guia = document.getElementById("guiaInput").value;
+            if (!guia) {
+                alert("Por favor ingresa el número de guía.");
+                return;
+            }
+
+            // URL del SheetBest con el link de la hoja
+            const apiUrl = `https://api.sheetbest.com/sheets/b13d671e-57cf-4253-b772-dd3f883e5811`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const envio = data.find(item => item.Guia === guia);
+                    if (envio) {
+                        // Muestra los detalles del envío
+                        document.getElementById("result").innerHTML = `
+                            <p><strong>Estado del envío:</strong> ${envio.Estado}</p>
+                            <p><strong>Detalle:</strong> ${envio.Detalle}</p>
+                            <p><strong>Nombre:</strong> ${envio.Nombre}</p>
+                            <p><strong>Dirección:</strong> ${envio.Direccion}</p>
+                        `;
+                    } else {
+                        document.getElementById("result").innerHTML = "<p>No se encontró el número de guía.</p>";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al obtener los datos:', error);
+                    document.getElementById("result").innerHTML = "<p>Hubo un error al consultar la guía.</p>";
+                });
+        }
+    </script>
+</body>
+</html>
